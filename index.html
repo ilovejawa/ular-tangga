@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>ULAR TANGGA NUSANTARA</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI','Comic Sans MS','Chalkboard SE',cursive,sans-serif; user-select:none; }
+body {
+    min-height:100vh;
+    background:linear-gradient(145deg,#0b4d3b 0%,#1a7a5c 40%,#2ba87a 100%);
+    display:flex; justify-content:center; align-items:center;
+    padding:12px; overflow-x:hidden;
+}
+#game-container {
+    width:100%; max-width:1200px;
+    background:#fef9e8; border-radius:48px 48px 32px 32px;
+    box-shadow:0 20px 30px rgba(0,0,0,0.5), inset 0 0 0 4px #f3d37c, inset 0 0 0 8px #c49a2b;
+    padding:20px 18px 24px; position:relative; border:2px solid #b8860b;
+}
+.header-bar {
+    display:flex; justify-content:space-between; align-items:center;
+    background:#1e3f2a; padding:8px 20px; border-radius:60px; margin-bottom:18px;
+    box-shadow:inset 0 -4px 0 #0e1f14, 0 6px 0 #0b1a10;
+}
+.header-bar h1 {
+    font-size:1.6rem; color:#ffd966;
+    text-shadow:3px 3px 0 #7a4f0e, 1px 1px 0 #fff5c2;
+    letter-spacing:2px; word-break:break-word; line-height:1.2;
+}
+.header-actions { display:flex; gap:10px; }
+.icon-btn {
+    background:#f9d56e; border:none; border-radius:40px;
+    width:48px; height:48px; font-size:1.8rem;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 5px 0 #b47d1e, 0 6px 10px rgba(0,0,0,0.3);
+    transition:all 0.06s ease; color:#2d2d2d;
+}
+.icon-btn:active { transform:translateY(5px); box-shadow:0 1px 0 #b47d1e; }
+.icon-btn.muted { background:#b0b0b0; box-shadow:0 5px 0 #6e6e6e; color:#4a4a4a; }
+
+.screen { display:none; animation:fadeIn 0.3s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0; transform:scale(0.98);} to{opacity:1; transform:scale(1);} }
+
+.home-hero { text-align:center; padding:10px 0 5px; }
+.home-hero .title-big {
+    font-size:3.2rem; font-weight:900; color:#e63946;
+    text-shadow:5px 5px 0 #ffd166, 7px 7px 0 #6b3e0c;
+    letter-spacing:3px; line-height:1.1; margin-bottom:6px; word-break:break-word;
+}
+.home-hero .subtitle {
+    font-size:1.3rem; background:#2a5a3a; color:#f9e79f;
+    display:inline-block; padding:8px 30px; border-radius:60px;
+    box-shadow:inset 0 -3px 0 #1d3d28, 0 6px 0 #0f2a1b;
+    margin-bottom:16px; font-weight:600; letter-spacing:1px;
+}
+.home-illustration {
+    display:flex; justify-content:center; align-items:center;
+    gap:12px; flex-wrap:wrap; background:#ffeaa5;
+    border-radius:100px 100px 40px 40px; padding:18px 10px 10px;
+    margin:12px 0 18px; border:5px dashed #c49a2b;
+}
+.home-illustration span {
+    font-size:4rem; filter:drop-shadow(4px 6px 0 rgba(0,0,0,0.15));
+    transition:transform 0.2s;
+}
+.home-illustration span:hover { transform:scale(1.1) rotate(3deg); }
+.home-buttons {
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:16px; margin-top:8px;
+}
+.btn-primary, .btn-secondary {
+    border:none; padding:16px 32px; font-size:1.3rem; font-weight:800;
+    border-radius:60px; cursor:pointer;
+    box-shadow:0 8px 0 #7a4f0e, 0 10px 15px rgba(0,0,0,0.3);
+    transition:all 0.06s ease; letter-spacing:1px;
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:8px; min-width:200px;
+}
+.btn-primary { background:#f9b234; color:#2a1f0c; }
+.btn-secondary { background:#7ec8a0; color:#18392a; box-shadow:0 8px 0 #3d7b5a, 0 10px 15px rgba(0,0,0,0.3); }
+.btn-primary:active, .btn-secondary:active {
+    transform:translateY(7px);
+    box-shadow:0 1px 0 #7a4f0e, 0 10px 15px rgba(0,0,0,0.2);
+}
+.btn-back {
+    background:#e0e0e0; color:#333; box-shadow:0 5px 0 #999;
+    padding:10px 20px; font-size:1rem; border-radius:40px;
+    border:none; cursor:pointer; font-weight:700;
+    display:inline-flex; align-items:center; gap:6px;
+    transition:all 0.06s; margin-bottom:10px;
+}
+.btn-back:active { transform:translateY(4px); box-shadow:0 1px 0 #999; }
+
+.player-select-panel {
+    background:#fff7e0; border-radius:40px; padding:26px 22px;
+    box-shadow:inset 0 0 0 4px #f3d37c, 0 10px 0 #a57c2b;
+    border:2px solid #b8860b; position:relative;
+}
+.section-title {
+    font-size:2rem; font-weight:800; color:#2d5a3b;
+    text-align:center; margin-bottom:16px;
+    text-shadow:2px 2px 0 #d4b86a;
+}
+.player-options {
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:18px; margin:24px 0;
+}
+.player-card {
+    background:#f0e3c6; border-radius:30px; padding:18px 18px 12px;
+    min-width:150px; text-align:center;
+    box-shadow:0 6px 0 #b6944a, 0 8px 12px rgba(0,0,0,0.2);
+    cursor:pointer; transition:all 0.1s; border:3px solid transparent;
+}
+.player-card.selected {
+    border:4px solid #e63946; background:#ffeaa5;
+    transform:scale(1.02);
+    box-shadow:0 6px 0 #b43b2a, 0 10px 18px rgba(0,0,0,0.3);
+}
+.player-card .icon { font-size:2.8rem; }
+.player-card .label { font-weight:700; font-size:1.2rem; color:#2f2f2f; }
+.name-inputs {
+    display:flex; flex-direction:column; gap:10px;
+    margin:16px 0; background:#e6d8b5; padding:18px; border-radius:30px;
+}
+.name-row {
+    display:flex; align-items:center; gap:12px;
+    background:#fff3d1; padding:6px 18px; border-radius:40px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,0.05);
+}
+.name-row label { font-weight:700; min-width:80px; color:#3a2e1e; }
+.name-row input {
+    flex:1; padding:12px 16px; border:2px solid #c4a86a;
+    border-radius:40px; font-size:1rem; background:#fffef7;
+    outline:none; font-weight:500;
+}
+.name-row input:focus { border-color:#e63946; box-shadow:0 0 0 3px #f9b23480; }
+.start-game-btn {
+    margin-top:20px; width:100%; padding:18px; font-size:1.8rem;
+    background:#2ecc71; color:#1a3a1a;
+    box-shadow:0 8px 0 #1f8b4c, 0 12px 20px rgba(0,0,0,0.3);
+    border:none; border-radius:60px; font-weight:900;
+    letter-spacing:2px; cursor:pointer; transition:all 0.06s ease;
+}
+.start-game-btn:active {
+    transform:translateY(7px);
+    box-shadow:0 1px 0 #1f8b4c, 0 12px 20px rgba(0,0,0,0.2);
+}
+
+.game-layout { display:flex; flex-direction:column; gap:16px; }
+@media (min-width:800px) {
+    .game-layout { flex-direction:row; align-items:flex-start; }
+    .board-area { flex:2; }
+    .info-area { flex:1; min-width:260px; }
+}
+.board-wrapper {
+    background:#2a5a3a; padding:12px; border-radius:40px;
+    box-shadow:inset 0 -6px 0 #163523, 0 12px 0 #0e2317, 0 18px 25px rgba(0,0,0,0.4);
+    position:relative;
+}
+.board-grid {
+    display:grid;
+    grid-template-columns:repeat(10, 1fr);
+    grid-template-rows:repeat(5, 1fr);
+    aspect-ratio:1 / 1;
+    width:100%;
+    border-radius:20px;
+    overflow:hidden;
+    background:#9b8b5c;
+    position:relative;
+    z-index:2;
+}
+#connector-svg {
+    position:absolute;
+    top:12px; left:12px;
+    width:calc(100% - 24px);
+    height:calc(100% - 24px);
+    pointer-events:none;
+    z-index:3;
+}
+.cell {
+    position:relative; background:#fef7e6;
+    display:flex; flex-direction:column;
+    justify-content:flex-start; align-items:flex-start;
+    padding:2px 3px; font-size:0.6rem; font-weight:700;
+    color:#4a3723; border:1px solid #b6944a;
+    transition:background 0.2s; overflow:hidden;
+    z-index:1;
+}
+.cell:nth-child(even) { background:#e8dcc8; }
+.cell .cell-number {
+    font-size:0.55rem; background:#b6944a; color:#fff5d6;
+    padding:1px 4px; border-radius:20px; line-height:1.3; z-index:4;
+    font-weight:800;
+}
+.cell.challenge-cell { background:#ffe28c !important; box-shadow:inset 0 0 0 2px #e6a017; }
+
+.cell .cell-icon {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    font-size:1.2rem;
+    line-height:1;
+    z-index:1;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,0.35));
+    pointer-events:none;
+}
+@media (max-width:1000px) { .cell .cell-icon { font-size:1rem; } }
+@media (max-width:800px)  { .cell .cell-icon { font-size:0.85rem; } }
+@media (max-width:600px)  { .cell .cell-icon { font-size:0.7rem; } .cell .cell-number { font-size:0.45rem; padding:0 2px; } }
+@media (max-width:450px)  { .cell .cell-icon { font-size:0.6rem; } .cell .cell-number { font-size:0.4rem; } }
+
+.pion-container {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    display:flex; flex-wrap:wrap; justify-content:center;
+    align-items:center; gap:2px; padding:1px;
+    pointer-events:none; z-index:5;
+}
+.pion {
+    width:32px; height:32px; border-radius:50%;
+    border:2px solid white;
+    box-shadow:0 3px 6px rgba(0,0,0,0.5);
+    display:inline-flex; align-items:center; justify-content:center;
+    color:white; font-weight:900; background:#e63946;
+    flex-shrink:0; font-size:8px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.7);
+    transition:all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    line-height:1;
+    text-align:center; padding:1px; overflow:hidden;
+    word-break:break-word; letter-spacing:-0.3px;
+}
+@media (max-width:1000px) { .pion { width:26px; height:26px; font-size:7px; } }
+@media (max-width:800px)  { .pion { width:22px; height:22px; font-size:6px; } }
+@media (max-width:600px)  { .pion { width:18px; height:18px; font-size:5px; } }
+@media (max-width:450px)  { .pion { width:14px; height:14px; font-size:4px; } }
+.pion .pion-label {
+    display:block; white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; max-width:100%;
+    padding:0 2px;
+}
+
+.info-panel {
+    background:#fff7e0; border-radius:30px; padding:16px;
+    box-shadow:inset 0 0 0 3px #f3d37c, 0 8px 0 #a57c2b;
+    display:flex; flex-direction:column; gap:12px;
+}
+.turn-indicator {
+    background:#1e3f2a; color:#ffd966; padding:10px 18px;
+    border-radius:40px; font-weight:800; font-size:1.2rem;
+    text-align:center; box-shadow:inset 0 -4px 0 #0e1f14;
+}
+.dice-area {
+    display:flex; align-items:center; justify-content:center;
+    gap:16px; flex-wrap:wrap;
+}
+.dice-display {
+    width:90px; height:90px;
+    background:#fff5d9; border-radius:20px;
+    box-shadow:0 6px 0 #b6944a, 0 8px 12px rgba(0,0,0,0.3);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.1s;
+    border:3px solid #c49a2b;
+}
+.dice-display svg { width:70%; height:70%; }
+.dice-display.rolling { animation:shake 0.15s infinite; }
+@keyframes shake {
+    0% { transform:rotate(0deg); }
+    25% { transform:rotate(15deg) scale(1.1); }
+    50% { transform:rotate(-10deg) scale(0.95); }
+    75% { transform:rotate(8deg) scale(1.05); }
+    100% { transform:rotate(0deg); }
+}
+.btn-roll {
+    background:#f9b234; border:none; padding:14px 26px;
+    font-size:1.4rem; font-weight:800; border-radius:60px;
+    box-shadow:0 7px 0 #7a4f0e, 0 10px 15px rgba(0,0,0,0.3);
+    cursor:pointer; transition:all 0.06s ease; color:#2a1f0c;
+    letter-spacing:1px;
+}
+.btn-roll:active { transform:translateY(6px); box-shadow:0 1px 0 #7a4f0e; }
+.btn-roll:disabled {
+    opacity:0.5; transform:translateY(5px);
+    box-shadow:0 2px 0 #7a4f0e; pointer-events:none;
+}
+.players-status {
+    display:flex; flex-direction:column; gap:6px;
+    max-height:180px; overflow-y:auto; padding-right:4px;
+}
+.player-status-item {
+    display:flex; align-items:center; gap:8px;
+    background:#e8dcc8; padding:6px 12px; border-radius:30px;
+    font-weight:600; transition:all 0.2s;
+}
+.player-status-item.active-turn {
+    background:#f9e79f; box-shadow:0 0 0 3px #e63946;
+    transform:scale(1.02);
+}
+.player-color-dot {
+    width:22px; height:22px; border-radius:50%;
+    border:2px solid white;
+    box-shadow:0 2px 4px rgba(0,0,0,0.3); flex-shrink:0;
+}
+.history-box {
+    background:#e6d8b5; border-radius:20px; padding:10px 12px;
+    max-height:130px; overflow-y:auto; font-size:0.85rem;
+    color:#2d2d2d; display:flex; flex-direction:column; gap:2px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,0.1);
+}
+.history-box div { border-bottom:1px dashed #b6944a; padding:2px 0; }
+.game-controls { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.btn-small {
+    background:#c49a2b; border:none; padding:8px 18px;
+    border-radius:40px; font-weight:700; color:#fff5d6;
+    box-shadow:0 4px 0 #7a4f0e; cursor:pointer;
+    transition:all 0.06s; font-size:0.9rem;
+}
+.btn-small:active { transform:translateY(3px); box-shadow:0 1px 0 #7a4f0e; }
+
+.modal-overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.6); backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    z-index:1000; padding:16px;
+    visibility:hidden; opacity:0; transition:opacity 0.2s;
+}
+.modal-overlay.show { visibility:visible; opacity:1; }
+.modal-box {
+    background:#fef9e8; border-radius:48px; padding:28px 24px;
+    max-width:500px; width:100%;
+    box-shadow:0 20px 0 #a57c2b, 0 30px 40px rgba(0,0,0,0.5);
+    border:4px solid #f3d37c; max-height:85vh; overflow-y:auto;
+    animation:popIn 0.25s ease;
+}
+@keyframes popIn {
+    from { transform:scale(0.8); opacity:0; }
+    to { transform:scale(1); opacity:1; }
+}
+.modal-box h2 {
+    color:#2d5a3b; text-align:center;
+    margin-bottom:16px; font-size:1.8rem;
+}
+.modal-box p {
+    font-size:1.1rem; margin-bottom:12px;
+    color:#3a2e1e; line-height:1.5;
+}
+.quiz-options {
+    display:flex; flex-direction:column; gap:10px; margin:18px 0;
+}
+.quiz-option {
+    background:#e8dcc8; border:3px solid #b6944a;
+    border-radius:40px; padding:14px 20px; font-size:1.1rem;
+    font-weight:600; color:#2f2f2f; cursor:pointer;
+    transition:all 0.1s; text-align:left;
+}
+.quiz-option:hover { background:#ffeaa5; border-color:#e63946; }
+.quiz-option.correct { background:#a3e4b8; border-color:#1e7a42; }
+.quiz-option.wrong { background:#f4a4a4; border-color:#b33b3b; }
+.quiz-option:disabled { cursor:default; opacity:0.8; }
+.modal-actions {
+    display:flex; gap:12px; justify-content:center;
+    flex-wrap:wrap; margin-top:18px;
+}
+
+.collection-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+    gap:14px; margin-top:16px;
+}
+.collection-card {
+    background:#f0e3c6; border-radius:24px; padding:14px 10px;
+    box-shadow:0 5px 0 #b6944a; cursor:pointer;
+    transition:all 0.15s; border:3px solid transparent; text-align:center;
+}
+.collection-card.read { border-color:#1e7a42; background:#d4f0dc; }
+.collection-card .icon { font-size:2.2rem; }
+.collection-card .title { font-weight:700; font-size:0.95rem; color:#2f2f2f; }
+.achievement-list {
+    display:flex; flex-direction:column; gap:10px; margin-top:12px;
+}
+.achievement-item {
+    background:#e8dcc8; border-radius:40px; padding:12px 18px;
+    display:flex; align-items:center; gap:12px;
+    font-weight:600; opacity:0.6; transition:all 0.2s;
+}
+.achievement-item.unlocked {
+    background:#f9e79f; opacity:1;
+    box-shadow:0 0 0 3px #e63946;
+}
+.achievement-item .icon { font-size:2rem; }
+.result-stats {
+    background:#e6d8b5; border-radius:30px;
+    padding:16px; margin:16px 0;
+}
+.result-stats p {
+    display:flex; justify-content:space-between;
+    font-size:1.1rem; margin:6px 0;
+    border-bottom:1px dashed #b6944a; padding-bottom:4px;
+}
+.confetti {
+    position:fixed; top:-20px; font-size:2rem;
+    animation:fall 3s linear forwards;
+    z-index:2000; pointer-events:none;
+}
+@keyframes fall {
+    to { transform:translateY(110vh) rotate(720deg); opacity:0.3; }
+}
+@media (max-width:600px) {
+    #game-container { padding:12px 10px 16px; border-radius:32px; }
+    .header-bar h1 { font-size:1.1rem; }
+    .icon-btn { width:40px; height:40px; font-size:1.4rem; }
+    .home-hero .title-big { font-size:2rem; }
+    .home-hero .subtitle { font-size:1rem; padding:6px 16px; }
+    .home-illustration span { font-size:2.5rem; }
+    .btn-primary, .btn-secondary { font-size:1rem; padding:12px 20px; min-width:140px; }
+    .player-card { min-width:110px; padding:12px; }
+    .player-card .icon { font-size:2rem; }
+    .section-title { font-size:1.5rem; }
+    .dice-display { width:70px; height:70px; }
+    .btn-roll { font-size:1.1rem; padding:12px 20px; }
+    .turn-indicator { font-size:1rem; }
+}
+</style>
+</head>
+<body>
+<div id="game-container">
+    <div class="header-bar">
+        <h1>🐍 ULAR TANGGA NUSANTARA 🪜</h1>
+        <div class="header-actions">
+            <button class="icon-btn" id="sound-toggle" title="Suara / Musik">🔊</button>
+            <button class="icon-btn" id="info-btn" title="Informasi">ℹ️</button>
+        </div>
+    </div>
+
+    <!-- HOME SCREEN -->
+    <div id="home-screen" class="screen active">
+        <div class="home-hero">
+            <div class="title-big">ULAR TANGGA<br>NUSANTARA</div>
+            <div class="subtitle">Lempar Dadu, Naiki Tangga, Jelajahi Indonesia</div>
+        </div>
+        <div class="home-illustration">
+            <span>🎲</span><span>🪜</span><span>🐍</span><span>🏝️</span><span>🎭</span><span>🏛️</span><span>🥘</span>
+        </div>
+        <div class="home-buttons">
+            <button class="btn-primary" id="btn-play">▶ MULAI BERMAIN</button>
+            <button class="btn-secondary" id="btn-howto">📖 CARA BERMAIN</button>
+            <button class="btn-secondary" id="btn-collection">📚 KOLEKSI PENGETAHUAN</button>
+            <button class="btn-secondary" id="btn-achievements">🏆 PENCAPAIAN</button>
+        </div>
+    </div>
+
+    <!-- PLAYER SELECT SCREEN -->
+    <div id="player-screen" class="screen">
+        <div class="player-select-panel">
+            <button class="btn-back" id="btn-back-from-player">← Kembali</button>
+            <div class="section-title">PILIH PEMAIN</div>
+            <div class="player-options" id="player-options">
+                <div class="player-card" data-count="1"><div class="icon">🤖</div><div class="label">1 vs Komputer</div></div>
+                <div class="player-card" data-count="2"><div class="icon">👥</div><div class="label">2 Pemain</div></div>
+                <div class="player-card" data-count="3"><div class="icon">👨‍👩‍👦</div><div class="label">3 Pemain</div></div>
+                <div class="player-card" data-count="4"><div class="icon">👨‍👩‍👧‍👦</div><div class="label">4 Pemain</div></div>
+            </div>
+            <div class="name-inputs" id="name-inputs"></div>
+            <button class="start-game-btn" id="btn-start-game">🚀 MULAI PERMAINAN</button>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen">
+        <div class="game-layout">
+            <div class="board-area">
+                <div class="board-wrapper">
+                    <div class="board-grid" id="board-grid"></div>
+                    <svg id="connector-svg"></svg>
+                </div>
+            </div>
+            <div class="info-area">
+                <div class="info-panel">
+                    <div class="turn-indicator" id="turn-indicator">Giliran: Pemain 1</div>
+                    <div class="dice-area">
+                        <div class="dice-display" id="dice-display">🎲</div>
+                        <button class="btn-roll" id="btn-roll">LEMPAR DADU</button>
+                    </div>
+                    <div class="players-status" id="players-status"></div>
+                    <div class="history-box" id="history-box"></div>
+                    <div class="game-controls">
+                        <button class="btn-small" id="btn-pause">⏸️ Jeda</button>
+                        <button class="btn-small" id="btn-back-from-game">🏠 Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box" id="modal-content"></div>
+</div>
+
+<script>
+/* ================================================================
+   DATA BUDAYA & PERTANYAAN
+   ================================================================ */
+/* ================================================================
+   DATA BUDAYA & PERTANYAAN
+   ================================================================ */
+const CULTURE_DATA = [
+    { name:"Rumah Gadang", origin:"Sumatera Barat", desc:"Rumah adat Minangkabau dengan atap bergonjong seperti tanduk kerbau.", fact:"Atapnya terinspirasi dari tanduk kerbau yang melambangkan kemenangan." },
+    { name:"Pakaian Adat Ulee Balang", origin:"Aceh", desc:"Pakaian adat pria dan wanita Aceh yang melambangkan keagungan.", fact:"Warna hitam dan emas mendominasi pakaian ini." },
+    { name:"Tari Saman", origin:"Aceh", desc:"Tarian seribu tangan yang dilakukan secara berkelompok dengan gerakan cepat.", fact:"Tari Saman diakui UNESCO sebagai Warisan Budaya Takbenda." },
+    { name:"Angklung", origin:"Jawa Barat", desc:"Alat musik dari bambu yang dimainkan dengan cara digoyangkan.", fact:"Angklung juga diakui UNESCO sebagai warisan budaya dunia." },
+    { name:"Rendang", origin:"Sumatera Barat", desc:"Makanan khas berbahan daging dengan bumbu rempah yang kaya.", fact:"Rendang dinobatkan sebagai salah satu makanan terlezat di dunia." },
+    { name:"Lagu Ampar-Ampar Pisang", origin:"Kalimantan Selatan", desc:"Lagu daerah yang bercerita tentang pisang yang dijemur.", fact:"Lagu ini sangat populer di kalangan anak-anak." },
+    { name:"Rumah Tongkonan", origin:"Sulawesi Selatan", desc:"Rumah adat Toraja dengan atap melengkung seperti perahu.", fact:"Tongkonan menghadap ke utara, dipercaya sebagai arah leluhur." },
+    { name:"Tari Kecak", origin:"Bali", desc:"Tarian dengan paduan suara 'cak' yang ritmis, menceritakan Ramayana.", fact:"Tari Kecak biasanya dipentaskan saat matahari terbenam." },
+    { name:"Sasando", origin:"Nusa Tenggara Timur", desc:"Alat musik petik dari daun lontar dengan resonansi bambu.", fact:"Bentuknya unik seperti kipas setengah lingkaran." },
+    { name:"Papeda", origin:"Maluku dan Papua", desc:"Makanan pokok dari sagu yang bertekstur kenyal, dimakan dengan ikan kuah kuning.", fact:"Papeda dimakan menggunakan alat khusus dari kayu." }
+];
+
+/* Jawaban benar TIDAK selalu di opsi A (index 0).
+   Index jawaban bervariasi: 0, 1, 2, atau 3. */
+const QUESTIONS = [
+    { question:"Rumah adat Gadang berasal dari provinsi mana?", options:["Jawa Tengah","Sumatera Barat","Bali","Papua"], answer:1, explanation:"Rumah Gadang adalah rumah adat Minangkabau, Sumatera Barat." },
+    { question:"Tari Saman berasal dari daerah?", options:["Sumatera Utara","Riau","Aceh","Jambi"], answer:2, explanation:"Tari Saman berasal dari Aceh dan diakui UNESCO." },
+    { question:"Alat musik Angklung terbuat dari?", options:["Kayu","Logam","Daun","Bambu"], answer:3, explanation:"Angklung terbuat dari bambu dan dimainkan dengan digoyangkan." },
+    { question:"Makanan khas Rendang berasal dari?", options:["Sumatera Barat","Jawa Timur","Bali","Sulawesi"], answer:0, explanation:"Rendang adalah makanan khas Sumatera Barat." },
+    { question:"Lagu 'Ampar-Ampar Pisang' berasal dari?", options:["Kalimantan Timur","Kalimantan Selatan","Sumatera Selatan","Jawa Barat"], answer:1, explanation:"Lagu Ampar-Ampar Pisang adalah lagu daerah Kalimantan Selatan." },
+    { question:"Rumah Tongkonan adalah rumah adat dari?", options:["Sulawesi Utara","Gorontalo","Maluku","Sulawesi Selatan"], answer:3, explanation:"Tongkonan adalah rumah adat Toraja, Sulawesi Selatan." },
+    { question:"Tari Kecak berasal dari pulau?", options:["Jawa","Bali","Sumatera","Kalimantan"], answer:1, explanation:"Tari Kecak berasal dari Bali." },
+    { question:"Alat musik Sasando berasal dari?", options:["Nusa Tenggara Barat","Maluku","Nusa Tenggara Timur","Papua"], answer:2, explanation:"Sasando berasal dari Nusa Tenggara Timur." },
+    { question:"Papeda adalah makanan khas dari?", options:["Sulawesi","Kalimantan","Sumatera","Maluku dan Papua"], answer:3, explanation:"Papeda adalah makanan pokok dari sagu, khas Maluku dan Papua." },
+    { question:"Pakaian adat Ulee Balang berasal dari?", options:["Aceh","Sumatera Utara","Riau","Lampung"], answer:0, explanation:"Ulee Balang adalah pakaian adat Aceh." },
+    { question:"Provinsi mana yang ibu kotanya Bandung?", options:["Jawa Tengah","Jawa Barat","Jawa Timur","Banten"], answer:1, explanation:"Bandung adalah ibu kota Jawa Barat." },
+    { question:"Lagu 'Bubuy Bulan' berasal dari daerah?", options:["Jawa Tengah","Jawa Timur","Jawa Barat","Bali"], answer:2, explanation:"Bubuy Bulan adalah lagu daerah Jawa Barat." },
+    { question:"Rumah Joglo adalah rumah adat dari?", options:["Jawa Barat","Jawa Timur","DI Yogyakarta","Jawa Tengah"], answer:3, explanation:"Rumah Joglo adalah rumah adat Jawa Tengah dan Yogyakarta." },
+    { question:"Tari Piring berasal dari?", options:["Sumatera Barat","Sumatera Selatan","Riau","Jambi"], answer:0, explanation:"Tari Piring berasal dari Sumatera Barat." },
+    { question:"Makanan Pempek berasal dari?", options:["Sumatera Utara","Sumatera Selatan","Lampung","Bengkulu"], answer:1, explanation:"Pempek adalah makanan khas Palembang, Sumatera Selatan." }
+];
+
+const ACHIEVEMENTS = [
+    { id:"first_turn", name:"Langkah Pertama", desc:"Menyelesaikan giliran pertama", icon:"👣", unlocked:false },
+    { id:"smart_answer", name:"Penjawab Cerdas", desc:"Menjawab 5 pertanyaan dengan benar", icon:"🧠", unlocked:false },
+    { id:"explorer", name:"Penjelajah Nusantara", desc:"Membaca 5 informasi budaya", icon:"📚", unlocked:false },
+    { id:"ladder_hunter", name:"Pemburu Tangga", desc:"Menaiki tangga 3 kali", icon:"🪜", unlocked:false },
+    { id:"winner", name:"Juara Ular Tangga", desc:"Memenangkan 1 permainan", icon:"🏆", unlocked:false }
+];
+
+/* ================================================================
+   STATE GAME
+   ================================================================ */
+let players = [];
+let currentPlayerIndex = 0;
+let gameActive = false;
+let isPaused = false;
+let diceValue = 0;
+let isRolling = false;
+let totalTurns = 0;
+let moveHistory = [];
+let soundEnabled = true;
+
+let stats = {
+    correctAnswers: 0,
+    laddersClimbed: 0,
+    culturesRead: JSON.parse(localStorage.getItem('nusantara_cultures_read') || '[]'),
+    achievements: JSON.parse(localStorage.getItem('nusantara_achievements') || '{}')
+};
+
+/* ================================================================
+   PETA 50 KOTAK (5 baris x 10 kolom)
+   ================================================================ */
+const BOARD_SIZE = 50;
+const GRID_ROWS = 5, GRID_COLS = 10;
+
+/* ================================================================
+   TANGGA & ULAR
+   ================================================================
+   TANGGA:
+   4  → 16
+   23 → 36
+   40 → 42
+
+   ULAR:
+   25 → 15
+   28 → 10
+   48 → 34
+   ================================================================ */
+const LADDERS = {
+    4: 15,
+    23: 35,
+    31: 42
+};
+
+const SNAKES = {
+    25: 16,
+    28: 10,
+    48: 34
+};
+
+/* Kotak pertanyaan: 1 per baris, dipilih acak dari kotak yang tidak ada tangga/ular */
+const QUESTION_CELLS = [];
+
+const PLAYER_COLORS = ['#e63946', '#2a9d8f', '#f4a261', '#9b5de5'];
+const PLAYER_ICONS = ['🔴', '🟢', '🟠', '🟣'];
+
+/* ================================================================
+   DOM REFS
+   ================================================================ */
+const homeScreen = document.getElementById('home-screen');
+const playerScreen = document.getElementById('player-screen');
+const gameScreen = document.getElementById('game-screen');
+const boardGrid = document.getElementById('board-grid');
+const connectorSvg = document.getElementById('connector-svg');
+const turnIndicator = document.getElementById('turn-indicator');
+const diceDisplay = document.getElementById('dice-display');
+const btnRoll = document.getElementById('btn-roll');
+const playersStatus = document.getElementById('players-status');
+const historyBox = document.getElementById('history-box');
+const modalOverlay = document.getElementById('modal-overlay');
+const modalContent = document.getElementById('modal-content');
+const soundToggle = document.getElementById('sound-toggle');
+const infoBtn = document.getElementById('info-btn');
+const btnPlay = document.getElementById('btn-play');
+const btnHowto = document.getElementById('btn-howto');
+const btnCollection = document.getElementById('btn-collection');
+const btnAchievements = document.getElementById('btn-achievements');
+const btnStartGame = document.getElementById('btn-start-game');
+const btnPause = document.getElementById('btn-pause');
+const btnBackHome = document.getElementById('btn-back-from-game');
+const btnBackPlayer = document.getElementById('btn-back-from-player');
+const playerOptions = document.getElementById('player-options');
+const nameInputs = document.getElementById('name-inputs');
+
+let selectedPlayerCount = 2;
+
+/* ================================================================
+   FUNGSI BANTUAN
+   ================================================================ */
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+}
+function showModal(html) {
+    modalContent.innerHTML = html;
+    modalOverlay.classList.add('show');
+}
+function closeModal() {
+    modalOverlay.classList.remove('show');
+}
+modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+});
+
+/* ================================================================
+   AUDIO
+   ================================================================ */
+let audioCtx = null;
+let musicPlaying = false;
+let musicTimer = null;
+
+function ensureAudioCtx() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
+
+function playSound(type) {
+    if (!soundEnabled) return;
+    try {
+        const ctx = ensureAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (type === 'roll') { osc.frequency.value = 600; gain.gain.value = 0.08; osc.type = 'square'; }
+        else if (type === 'step') { osc.frequency.value = 400; gain.gain.value = 0.1; osc.type = 'sine'; }
+        else if (type === 'ladder') { osc.frequency.value = 800; gain.gain.value = 0.12; osc.type = 'triangle'; }
+        else if (type === 'snake') { osc.frequency.value = 200; gain.gain.value = 0.12; osc.type = 'sawtooth'; }
+        else if (type === 'correct') { osc.frequency.value = 1000; gain.gain.value = 0.1; osc.type = 'sine'; }
+        else if (type === 'wrong') { osc.frequency.value = 150; gain.gain.value = 0.1; osc.type = 'sawtooth'; }
+        else if (type === 'win') { osc.frequency.value = 1200; gain.gain.value = 0.15; osc.type = 'sine'; }
+        else { osc.frequency.value = 500; gain.gain.value = 0.05; }
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+    } catch (e) { /* abaikan */ }
+}
+
+const MUSIC_NOTES = [
+    392.00, 440.00, 493.88, 523.25, 493.88, 440.00, 392.00, 329.63,
+    349.23, 392.00, 440.00, 493.88, 440.00, 392.00, 349.23, 293.66
+];
+let musicNoteIndex = 0;
+
+function playMusicNote() {
+    if (!soundEnabled || !musicPlaying) return;
+    try {
+        const ctx = ensureAudioCtx();
+        const now = ctx.currentTime;
+        const freq = MUSIC_NOTES[musicNoteIndex % MUSIC_NOTES.length];
+        musicNoteIndex++;
+
+        [freq, freq * 0.5].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = f;
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.linearRampToValueAtTime(i === 0 ? 0.035 : 0.02, now + 0.05);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+            osc.connect(g);
+            g.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.5);
+        });
+
+        if (musicNoteIndex % 4 === 0) {
+            const bass = ctx.createOscillator();
+            const bg = ctx.createGain();
+            bass.type = 'triangle';
+            bass.frequency.value = freq / 4;
+            bg.gain.setValueAtTime(0.0001, now);
+            bg.gain.linearRampToValueAtTime(0.05, now + 0.05);
+            bg.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+            bass.connect(bg);
+            bg.connect(ctx.destination);
+            bass.start(now);
+            bass.stop(now + 0.85);
+        }
+    } catch (e) { /* abaikan */ }
+}
+
+function startMusic() {
+    if (musicPlaying) return;
+    musicPlaying = true;
+    ensureAudioCtx();
+    const interval = 420;
+    musicTimer = setInterval(playMusicNote, interval);
+    playMusicNote();
+}
+
+function stopMusic() {
+    musicPlaying = false;
+    if (musicTimer) {
+        clearInterval(musicTimer);
+        musicTimer = null;
+    }
+}
+
+/* ================================================================
+   LOGIKA KOORDINAT PAPAN 50 KOTAK
+   ================================================================ */
+function getGridPos(num) {
+    if (num < 1 || num > BOARD_SIZE) return null;
+    const idx = num - 1;
+    const row = Math.floor(idx / 10);
+    const col = idx % 10;   // ← langsung pakai colInRow, tanpa if-else
+    return { row, col };
+}
+
+function getCellNumber(row, col) {
+    if (row < 0 || row > 4 || col < 0 || col > 9) return null;
+    let num;
+    if (row % 2 === 0) {
+        num = row * 10 + col + 1;
+    } else {
+        num = row * 10 + (9 - col) + 1;
+    }
+    return num;
+}
+
+/* ================================================================
+   GENERATE QUESTION CELLS (1 per baris, acak, hindari tangga/ular)
+   ================================================================ */
+/* ================================================================
+   GENERATE QUESTION CELLS
+   Semua kotak 2–49 menjadi kotak pertanyaan,
+   KECUALI kotak 1 dan 50, serta kotak yang ditempati tangga/ular.
+   ================================================================ */
+function generateQuestionCells() {
+    QUESTION_CELLS.length = 0;
+    const occupied = new Set([
+        ...Object.keys(LADDERS).map(Number),
+        ...Object.keys(SNAKES).map(Number),
+        ...Object.values(LADDERS).map(Number),
+        ...Object.values(SNAKES).map(Number)
+    ]);
+
+    for (let num = 2; num <= 49; num++) {
+        if (occupied.has(num)) continue;
+        QUESTION_CELLS.push(num);
+    }
+}
+
+/* ================================================================
+   RENDER PAPAN 50 KOTAK
+   ================================================================ */
+function buildBoard() {
+    boardGrid.innerHTML = '';
+    connectorSvg.innerHTML = '';
+
+    for (let r = 4; r >= 0; r--) {
+        let cols = [];
+        if (r % 2 === 0) {
+            for (let c = 0; c < 10; c++) cols.push(c);
+        } else {
+            for (let c = 9; c >= 0; c--) cols.push(c);
+        }
+
+        cols.forEach(c => {
+            const num = getCellNumber(r, c);
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.cell = num;
+            cell.id = `cell-${num}`;
+
+            const numSpan = document.createElement('span');
+            numSpan.className = 'cell-number';
+            numSpan.textContent = num;
+            cell.appendChild(numSpan);
+
+            if (!LADDERS[num] && !SNAKES[num] && QUESTION_CELLS.includes(num)) {
+                cell.classList.add('challenge-cell');
+                const icon = document.createElement('span');
+                icon.className = 'cell-icon';
+                icon.textContent = '❓';
+                cell.appendChild(icon);
+            }
+
+            const pionContainer = document.createElement('div');
+            pionContainer.className = 'pion-container';
+            pionContainer.id = `pion-container-${num}`;
+            cell.appendChild(pionContainer);
+
+            boardGrid.appendChild(cell);
+        });
+    }
+}
+
+/* ================================================================
+   MENGGAMBAR TANGGA & ULAR (SVG)
+   ================================================================ */
+function drawConnectors() {
+    const boardRect = boardGrid.getBoundingClientRect();
+    if (boardRect.width === 0 || boardRect.height === 0) {
+        requestAnimationFrame(drawConnectors);
+        return;
+    }
+    
+    const cellWidth = boardRect.width / 10;
+    const cellHeight = boardRect.height / 5;
+    const cellSize = Math.min(cellWidth, cellHeight);
+    
+    function getCellCenter(num) {
+        const pos = getGridPos(num);
+        if (!pos) return { x: 0, y: 0 };
+        const x = pos.col * cellWidth + cellWidth / 2;
+        const y = (4 - pos.row) * cellHeight + cellHeight / 2;
+        return { x, y };
+    }
+
+    let svgContent = '';
+
+    /* ============================================================
+       GAMBAR TANGGA
+       ============================================================ */
+    for (const [startStr, endStr] of Object.entries(LADDERS)) {
+        const start = parseInt(startStr);
+        const end = parseInt(endStr);
+        const p1 = getCellCenter(start);
+        const p2 = getCellCenter(end);
+        
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx);
+        
+        const railGap = Math.max(6, cellSize * 0.18);
+        
+        const perpX = -Math.sin(angle) * railGap;
+        const perpY = Math.cos(angle) * railGap;
+        
+        const l1 = { x: p1.x + perpX, y: p1.y + perpY };
+        const l2 = { x: p2.x + perpX, y: p2.y + perpY };
+        const r1 = { x: p1.x - perpX, y: p1.y - perpY };
+        const r2 = { x: p2.x - perpX, y: p2.y - perpY };
+        
+        svgContent += `<line x1="${l1.x}" y1="${l1.y}" x2="${l2.x}" y2="${l2.y}" 
+            stroke="#8B4513" stroke-width="${Math.max(3, cellSize*0.06)}" stroke-linecap="round" />`;
+        svgContent += `<line x1="${r1.x}" y1="${r1.y}" x2="${r2.x}" y2="${r2.y}" 
+            stroke="#8B4513" stroke-width="${Math.max(3, cellSize*0.06)}" stroke-linecap="round" />`;
+        
+        const stepCount = Math.max(3, Math.floor(length / (cellSize * 0.35)));
+        for (let i = 1; i < stepCount; i++) {
+            const t = i / stepCount;
+            const cx = p1.x + dx * t;
+            const cy = p1.y + dy * t;
+            svgContent += `<line x1="${cx + perpX}" y1="${cy + perpY}" x2="${cx - perpX}" y2="${cy - perpY}" 
+                stroke="#DAA520" stroke-width="${Math.max(2, cellSize*0.05)}" stroke-linecap="round" />`;
+        }
+        
+        svgContent += `<circle cx="${p1.x}" cy="${p1.y}" r="${cellSize*0.12}" fill="#8B4513" opacity="0.7" />`;
+        svgContent += `<circle cx="${p2.x}" cy="${p2.y}" r="${cellSize*0.12}" fill="#DAA520" opacity="0.7" />`;
+    }
+
+    /* ============================================================
+       GAMBAR ULAR
+       ============================================================ */
+    for (const [startStr, endStr] of Object.entries(SNAKES)) {
+        const start = parseInt(startStr);
+        const end = parseInt(endStr);
+        const p1 = getCellCenter(start);
+        const p2 = getCellCenter(end);
+        
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx);
+        
+        const bodyWidth = Math.max(5, cellSize * 0.14);
+        
+        const perpX = -Math.sin(angle) * length * 0.25;
+        const perpY = Math.cos(angle) * length * 0.25;
+        
+        const cx = p1.x + dx * 0.5 + perpX;
+        const cy = p1.y + dy * 0.5 + perpY;
+        
+        const bodyPath = `M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}`;
+        
+        svgContent += `<path d="${bodyPath}" fill="none" stroke="#1B5E20" 
+            stroke-width="${bodyWidth + 2}" stroke-linecap="round" opacity="0.3" 
+            transform="translate(2,2)" />`;
+        
+        svgContent += `<path d="${bodyPath}" fill="none" stroke="#2E7D32" 
+            stroke-width="${bodyWidth}" stroke-linecap="round" />`;
+        
+        svgContent += `<path d="${bodyPath}" fill="none" stroke="#A5D6A7" 
+            stroke-width="${bodyWidth * 0.4}" stroke-linecap="round" 
+            stroke-dasharray="4,4" />`;
+        
+        const headR = bodyWidth * 0.9;
+        svgContent += `<circle cx="${p1.x}" cy="${p1.y}" r="${headR}" 
+            fill="#2E7D32" stroke="#1B5E20" stroke-width="2" />`;
+        
+        const eyeOffsetX = Math.cos(angle + Math.PI/2) * headR * 0.5;
+        const eyeOffsetY = Math.sin(angle + Math.PI/2) * headR * 0.5;
+        const eyeForwardX = Math.cos(angle) * headR * 0.3;
+        const eyeForwardY = Math.sin(angle) * headR * 0.3;
+        
+        svgContent += `<circle cx="${p1.x + eyeOffsetX + eyeForwardX}" cy="${p1.y + eyeOffsetY + eyeForwardY}" 
+            r="${headR * 0.35}" fill="#FFF" />`;
+        svgContent += `<circle cx="${p1.x - eyeOffsetX + eyeForwardX}" cy="${p1.y - eyeOffsetY + eyeForwardY}" 
+            r="${headR * 0.35}" fill="#FFF" />`;
+        svgContent += `<circle cx="${p1.x + eyeOffsetX + eyeForwardX}" cy="${p1.y + eyeOffsetY + eyeForwardY}" 
+            r="${headR * 0.18}" fill="#000" />`;
+        svgContent += `<circle cx="${p1.x - eyeOffsetX + eyeForwardX}" cy="${p1.y - eyeOffsetY + eyeForwardY}" 
+            r="${headR * 0.18}" fill="#000" />`;
+        
+        const tongueX = p1.x + Math.cos(angle) * headR * 1.8;
+        const tongueY = p1.y + Math.sin(angle) * headR * 1.8;
+        const tongueSpread = headR * 0.4;
+        const tonguePerpX = -Math.sin(angle) * tongueSpread;
+        const tonguePerpY = Math.cos(angle) * tongueSpread;
+        
+        svgContent += `<line x1="${p1.x + Math.cos(angle) * headR}" y1="${p1.y + Math.sin(angle) * headR}" 
+            x2="${tongueX}" y2="${tongueY}" stroke="#E53935" stroke-width="${bodyWidth*0.15}" stroke-linecap="round" />`;
+        svgContent += `<line x1="${tongueX}" y1="${tongueY}" 
+            x2="${tongueX + tonguePerpX}" y2="${tongueY + tonguePerpY}" 
+            stroke="#E53935" stroke-width="${bodyWidth*0.15}" stroke-linecap="round" />`;
+        svgContent += `<line x1="${tongueX}" y1="${tongueY}" 
+            x2="${tongueX - tonguePerpX}" y2="${tongueY - tonguePerpY}" 
+            stroke="#E53935" stroke-width="${bodyWidth*0.15}" stroke-linecap="round" />`;
+        
+        const tailR = bodyWidth * 0.4;
+        svgContent += `<circle cx="${p2.x}" cy="${p2.y}" r="${tailR}" 
+            fill="#2E7D32" stroke="#1B5E20" stroke-width="1" />`;
+        svgContent += `<circle cx="${p2.x}" cy="${p2.y}" r="${tailR * 0.4}" 
+            fill="#1B5E20" />`;
+    }
+
+    connectorSvg.innerHTML = svgContent;
+}
+
+/* ================================================================
+   RENDER PION
+   ================================================================ */
+function renderPions() {
+    document.querySelectorAll('.pion').forEach(p => p.remove());
+    
+    players.forEach((p) => {
+        const container = document.getElementById(`pion-container-${p.position}`);
+        if (container) {
+            const pion = document.createElement('div');
+            pion.className = 'pion';
+            pion.style.background = p.color;
+            pion.title = `${p.name} (kotak ${p.position})`;
+            
+            const label = document.createElement('span');
+            label.className = 'pion-label';
+            let shortName = p.name.trim();
+            if (shortName.length > 6) shortName = shortName.slice(0, 6);
+            label.textContent = shortName;
+            pion.appendChild(label);
+            
+            container.appendChild(pion);
+        }
+    });
+}
+
+/* ================================================================
+   RENDER STATUS PEMAIN
+   ================================================================ */
+function renderPlayersStatus() {
+    playersStatus.innerHTML = '';
+    players.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = 'player-status-item' + (idx === currentPlayerIndex && gameActive ? ' active-turn' : '');
+        div.innerHTML = `
+            <span class="player-color-dot" style="background:${p.color};"></span>
+            <span style="flex:1; font-weight:700;">${p.name}</span>
+            <span>📍 ${p.position}</span>
+            <span style="background:#2a5a3a; color:#ffd966; padding:2px 10px; border-radius:20px;">${p.score} poin</span>
+        `;
+        playersStatus.appendChild(div);
+    });
+}
+
+/* ================================================================
+   RIWAYAT
+   ================================================================ */
+function addHistory(text) {
+    moveHistory.unshift(text);
+    if (moveHistory.length > 8) moveHistory.pop();
+    historyBox.innerHTML = moveHistory.map(t => `<div>${t}</div>`).join('');
+}
+
+/* ================================================================
+   TURN INDICATOR
+   ================================================================ */
+function updateTurnIndicator() {
+    if (!gameActive) return;
+    const p = players[currentPlayerIndex];
+    turnIndicator.textContent = `Giliran: ${p.name} ${p.icon}`;
+}
+
+/* ================================================================
+   DADU (TITIK)
+   ================================================================ */
+function renderDiceFace(value) {
+    const dotPositions = {
+        1: [[50, 50]],
+        2: [[28, 28], [72, 72]],
+        3: [[28, 28], [50, 50], [72, 72]],
+        4: [[28, 28], [72, 28], [28, 72], [72, 72]],
+        5: [[28, 28], [72, 28], [50, 50], [28, 72], [72, 72]],
+        6: [[28, 28], [72, 28], [28, 50], [72, 50], [28, 72], [72, 72]]
+    };
+    const dots = dotPositions[value] || dotPositions[1];
+    let circles = '';
+    dots.forEach(([cx, cy]) => {
+        circles += `<circle cx="${cx}" cy="${cy}" r="9" fill="#2f2f2f"/>`;
+    });
+    diceDisplay.innerHTML = `
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="5" width="90" height="90" rx="15" ry="15" fill="#fff8e0" stroke="#c49a2b" stroke-width="3"/>
+            ${circles}
+        </svg>
+    `;
+}
+
+/* ================================================================
+   ROLL DICE
+   ================================================================ */
+async function rollDice() {
+    if (isRolling || !gameActive || isPaused) return;
+    isRolling = true;
+    btnRoll.disabled = true;
+    diceDisplay.classList.add('rolling');
+    playSound('roll');
+
+    for (let i = 0; i < 8; i++) {
+        const tempVal = Math.floor(Math.random() * 6) + 1;
+        renderDiceFace(tempVal);
+        await new Promise(r => setTimeout(r, 60));
+    }
+    diceDisplay.classList.remove('rolling');
+    diceValue = Math.floor(Math.random() * 6) + 1;
+    renderDiceFace(diceValue);
+
+    const currentPlayer = players[currentPlayerIndex];
+    await processMove(currentPlayer, diceValue);
+    isRolling = false;
+    btnRoll.disabled = false;
+}
+
+/* ================================================================
+   PROSES LANGKAH
+   ================================================================ */
+async function processMove(player, steps) {
+    const oldPos = player.position;
+    let newPos = oldPos + steps;
+    
+    if (newPos > BOARD_SIZE) {
+        addHistory(`${player.icon} ${player.name} melempar ${steps}, tetap di ${oldPos} (melebihi ${BOARD_SIZE})`);
+        playSound('step');
+    } else {
+        player.position = newPos;
+        addHistory(`${player.icon} ${player.name} melempar ${steps}, bergerak ke ${newPos}`);
+        playSound('step');
+        
+        renderPions();
+        renderPlayersStatus();
+        
+        await new Promise(r => setTimeout(r, 600));
+
+        if (LADDERS[player.position]) {
+            const tujuan = LADDERS[player.position];
+            addHistory(`${player.icon} ${player.name} menaiki tangga dari ${player.position} ke ${tujuan}!`);
+            playSound('ladder');
+            stats.laddersClimbed++;
+            
+            player.position = tujuan;
+            renderPions();
+            renderPlayersStatus();
+            
+            await new Promise(r => setTimeout(r, 800));
+            checkAchievement('ladder_hunter');
+        } 
+        else if (SNAKES[player.position]) {
+            const tujuan = SNAKES[player.position];
+            addHistory(`${player.icon} ${player.name} tergelincir ular dari ${player.position} ke ${tujuan}!`);
+            playSound('snake');
+            
+            player.position = tujuan;
+            renderPions();
+            renderPlayersStatus();
+            
+            await new Promise(r => setTimeout(r, 800));
+        }
+
+        await handleSpecialCell(player);
+    }
+
+    if (player.position === BOARD_SIZE) {
+        await endGame(player);
+        return;
+    }
+
+    await new Promise(r => setTimeout(r, 300));
+    nextTurn();
+}
+
+/* ================================================================
+   KOTAK KHUSUS — hanya pertanyaan
+   ================================================================ */
+async function handleSpecialCell(player) {
+    const pos = player.position;
+    if (QUESTION_CELLS.includes(pos)) {
+        await showQuiz(player);
+    }
+}
+
+/* ================================================================
+   QUIZ
+   ================================================================ */
+/* ================================================================
+   QUIZ (opsi diacak setiap kali tampil)
+   ================================================================ */
+async function showQuiz(player) {
+    const q = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+
+    // Acak urutan opsi beserta index jawaban benarnya
+    const shuffled = q.options
+        .map((opt, i) => ({ opt, isCorrect: i === q.answer }))
+        .sort(() => Math.random() - 0.5);
+
+    const correctIndex = shuffled.findIndex(o => o.isCorrect);
+    const shuffledOptions = shuffled.map(o => o.opt);
+
+    let answered = false;
+
+    return new Promise((resolve) => {
+        const optionsHtml = shuffledOptions.map((opt, i) =>
+            `<button class="quiz-option" data-index="${i}">${opt}</button>`
+        ).join('');
+
+        showModal(`
+            <h2>🧠 PERTANYAAN EDUKASI</h2>
+            <p style="font-weight:600;">${q.question}</p>
+            <div class="quiz-options" id="quiz-options">${optionsHtml}</div>
+            <div id="quiz-feedback" style="font-weight:700; text-align:center; margin-top:8px;"></div>
+            <div class="modal-actions" id="quiz-actions" style="display:none;">
+                <button class="btn-primary" id="quiz-next">Lanjut</button>
+            </div>
+        `);
+
+        const quizOptions = document.getElementById('quiz-options');
+        const feedback = document.getElementById('quiz-feedback');
+        const quizActions = document.getElementById('quiz-actions');
+        const quizNext = document.getElementById('quiz-next');
+
+        quizOptions.addEventListener('click', (e) => {
+            const btn = e.target.closest('.quiz-option');
+            if (!btn || answered) return;
+            answered = true;
+            const selected = parseInt(btn.dataset.index);
+            const allBtns = quizOptions.querySelectorAll('.quiz-option');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selected === correctIndex) {
+                btn.classList.add('correct');
+                player.score += 10;
+                stats.correctAnswers++;
+                playSound('correct');
+                feedback.innerHTML = `✅ Benar! +10 poin.<br><small>${q.explanation}</small>`;
+                checkAchievement('smart_answer');
+            } else {
+                btn.classList.add('wrong');
+                allBtns[correctIndex].classList.add('correct');
+                playSound('wrong');
+                feedback.innerHTML = `❌ Salah. Jawaban yang benar: ${shuffledOptions[correctIndex]}.<br><small>${q.explanation}</small>`;
+            }
+            renderPlayersStatus();
+            quizActions.style.display = 'flex';
+        });
+
+        quizNext.addEventListener('click', () => {
+            closeModal();
+            resolve();
+        });
+    });
+}
+
+/* ================================================================
+   GILIRAN BERIKUTNYA
+   ================================================================ */
+function nextTurn() {
+    if (!gameActive) return;
+    totalTurns++;
+    checkAchievement('first_turn');
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    updateTurnIndicator();
+    renderPlayersStatus();
+
+    const p = players[currentPlayerIndex];
+    if (p.isComputer && gameActive && !isPaused) {
+        setTimeout(() => {
+            if (gameActive && !isPaused && players[currentPlayerIndex] === p) {
+                rollDice();
+            }
+        }, 800);
+    }
+    if (!p.isComputer) {
+        btnRoll.disabled = false;
+    } else {
+        btnRoll.disabled = true;
+    }
+}
+
+/* ================================================================
+   MULAI GAME
+   ================================================================ */
+function startGame() {
+    const inputs = document.querySelectorAll('.name-row input');
+    players = [];
+
+    if (selectedPlayerCount === 1) {
+        players = [
+            { id: 0, name: inputs[0]?.value.trim() || 'Pemain', position: 1, score: 0, color: PLAYER_COLORS[0], icon: '🔴', isComputer: false },
+            { id: 1, name: 'Komputer', position: 1, score: 0, color: PLAYER_COLORS[1], icon: '🟢', isComputer: true }
+        ];
+    } else {
+        for (let i = 0; i < selectedPlayerCount; i++) {
+            const name = inputs[i] ? inputs[i].value.trim() : '';
+            players.push({
+                id: i,
+                name: name || `Pemain ${i + 1}`,
+                position: 1,
+                score: 0,
+                color: PLAYER_COLORS[i],
+                icon: PLAYER_ICONS[i],
+                isComputer: false
+            });
+        }
+    }
+
+    currentPlayerIndex = 0;
+    gameActive = true;
+    isPaused = false;
+    totalTurns = 0;
+    moveHistory = [];
+    historyBox.innerHTML = '';
+    diceValue = 0;
+    renderDiceFace(1);
+    btnRoll.disabled = false;
+
+    stats.correctAnswers = 0;
+    stats.laddersClimbed = 0;
+
+    generateQuestionCells();
+    buildBoard();
+    renderPions();
+    renderPlayersStatus();
+    updateTurnIndicator();
+    showScreen('game-screen');
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            drawConnectors();
+        });
+    });
+
+    startMusic();
+    addHistory('🎮 Permainan dimulai!');
+    if (players[0].isComputer) {
+        btnRoll.disabled = true;
+        setTimeout(() => { if (gameActive) rollDice(); }, 600);
+    }
+}
+
+/* ================================================================
+   AKHIR GAME
+   ================================================================ */
+async function endGame(winner) {
+    gameActive = false;
+    btnRoll.disabled = true;
+    unlockAchievement('winner');
+
+    const sorted = [...players].sort((a, b) => b.position - a.position || b.score - a.score);
+
+    for (let i = 0; i < 30; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti';
+        conf.textContent = ['🎉','🎊','⭐','🏆','🇮🇩'][Math.floor(Math.random()*5)];
+        conf.style.left = Math.random() * 100 + 'vw';
+        conf.style.animationDelay = Math.random() * 2 + 's';
+        conf.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+        document.body.appendChild(conf);
+        setTimeout(() => conf.remove(), 4000);
+    }
+
+    playSound('win');
+
+    let html = `
+        <h2>🏆 PEMENANG 🏆</h2>
+        <p style="font-size:1.8rem; font-weight:900; text-align:center; color:#e63946;">${winner.name}</p>
+        <div class="result-stats">
+            <p><span>Total Giliran</span> <strong>${totalTurns}</strong></p>
+            <p><span>Skor Pemenang</span> <strong>${winner.score}</strong></p>
+            <p><span>Jawaban Benar</span> <strong>${stats.correctAnswers}</strong></p>
+        </div>
+        <p style="text-align:center; font-weight:600;">Peringkat:</p>
+    `;
+    sorted.forEach((p, i) => {
+        html += `<p style="display:flex; justify-content:space-between; background:#e8dcc8; padding:6px 14px; border-radius:30px; margin:4px 0;">
+            <span>${i+1}. ${p.icon} ${p.name}</span> <span>${p.position} kotak | ${p.score} poin</span>
+        </p>`;
+    });
+    html += `
+        <div class="modal-actions" style="margin-top:16px;">
+            <button class="btn-primary" id="btn-play-again">MAIN LAGI</button>
+            <button class="btn-secondary" id="btn-home-from-result">KEMBALI KE HOME</button>
+        </div>
+    `;
+
+    showModal(html);
+
+    document.getElementById('btn-play-again').addEventListener('click', () => {
+        closeModal();
+        showScreen('player-screen');
+        gameActive = false;
+        document.querySelectorAll('.pion').forEach(p => p.remove());
+    });
+    document.getElementById('btn-home-from-result').addEventListener('click', () => {
+        closeModal();
+        showScreen('home-screen');
+        gameActive = false;
+        document.querySelectorAll('.pion').forEach(p => p.remove());
+    });
+}
+
+/* ================================================================
+   PENCAPAIAN
+   ================================================================ */
+function checkAchievement(id) {
+    if (id === 'first_turn' && totalTurns >= 1) unlockAchievement(id);
+    if (id === 'smart_answer' && stats.correctAnswers >= 5) unlockAchievement(id);
+    if (id === 'ladder_hunter' && stats.laddersClimbed >= 3) unlockAchievement(id);
+}
+function unlockAchievement(id) {
+    const ach = ACHIEVEMENTS.find(a => a.id === id);
+    if (ach && !stats.achievements[id]) {
+        stats.achievements[id] = true;
+        localStorage.setItem('nusantara_achievements', JSON.stringify(stats.achievements));
+        addHistory(`🏆 Pencapaian terbuka: ${ach.name}`);
+    }
+}
+
+/* ================================================================
+   KOLEKSI
+   ================================================================ */
+function renderCollection() {
+    const readList = stats.culturesRead;
+    let html = `
+        <button class="btn-back" onclick="closeModal()">← Kembali</button>
+        <h2>📚 KOLEKSI PENGETAHUAN</h2>
+        <p>Klik kartu untuk membaca.</p>
+        <div class="collection-grid">
+    `;
+    CULTURE_DATA.forEach((c, i) => {
+        const read = readList.includes(i);
+        html += `
+            <div class="collection-card ${read ? 'read' : ''}" data-index="${i}">
+                <div class="icon">${read ? '✅' : '📖'}</div>
+                <div class="title">${c.name}</div>
+                <div style="font-size:0.75rem;">${c.origin}</div>
+            </div>
+        `;
+    });
+    html += `</div>`;
+
+    showModal(html);
+
+    document.querySelectorAll('.collection-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const idx = parseInt(card.dataset.index);
+            const c = CULTURE_DATA[idx];
+            if (!readList.includes(idx)) {
+                readList.push(idx);
+                localStorage.setItem('nusantara_cultures_read', JSON.stringify(readList));
+                stats.culturesRead = readList;
+                card.classList.add('read');
+                card.querySelector('.icon').textContent = '✅';
+                if (readList.length >= 5) unlockAchievement('explorer');
+            }
+            showModal(`
+                <button class="btn-back" onclick="renderCollection()">← Kembali</button>
+                <h2>${c.name}</h2>
+                <p><strong>Asal:</strong> ${c.origin}</p>
+                <p>${c.desc}</p>
+                <p><em>Fakta menarik: ${c.fact}</em></p>
+                <div class="modal-actions">
+                    <button class="btn-primary" onclick="closeModal()">Tutup</button>
+                </div>
+            `);
+        });
+    });
+}
+
+/* ================================================================
+   PENCAPAIAN RENDER
+   ================================================================ */
+function renderAchievements() {
+    let html = `
+        <button class="btn-back" onclick="closeModal()">← Kembali</button>
+        <h2>🏆 PENCAPAIAN</h2>
+        <div class="achievement-list">
+    `;
+    ACHIEVEMENTS.forEach(a => {
+        const unlocked = stats.achievements[a.id] || false;
+        html += `
+            <div class="achievement-item ${unlocked ? 'unlocked' : ''}">
+                <span class="icon">${a.icon}</span>
+                <div>
+                    <div style="font-weight:800;">${a.name}</div>
+                    <div style="font-size:0.8rem;">${a.desc}</div>
+                </div>
+                ${unlocked ? '<span style="margin-left:auto;">✅</span>' : ''}
+            </div>
+        `;
+    });
+    html += `</div>`;
+    showModal(html);
+}
+
+/* ================================================================
+   EVENT LISTENERS
+   ================================================================ */
+btnPlay.addEventListener('click', () => {
+    ensureAudioCtx();
+    if (soundEnabled) startMusic();
+    showScreen('player-screen');
+    renderPlayerOptions();
+});
+
+btnHowto.addEventListener('click', () => {
+    showModal(`
+        <button class="btn-back" onclick="closeModal()">← Kembali</button>
+        <h2>📖 CARA BERMAIN</h2>
+        <ol style="font-size:1.05rem; line-height:1.7; padding-left:20px;">
+            <li>Permainan dimainkan oleh dua pemain atau lebih.</li>
+            <li>Semua pemain memulai dari kotak 1.</li>
+            <li>Pemain melempar dadu secara bergantian.</li>
+            <li>Pion bergerak sesuai angka yang muncul pada dadu.</li>
+            <li>Jika berhenti di pangkal tangga, pion naik ke kotak yang lebih tinggi.</li>
+            <li>Jika berhenti di kepala ular, pion turun ke kotak yang lebih rendah.</li>
+            <li>Jika berhenti di kotak pertanyaan (❓), pemain harus menjawab pertanyaan yang muncul.</li>
+            <li>Jawaban benar = +10 poin, salah = tidak dapat poin.</li>
+            <li>Pemain harus mencapai kotak 50 untuk memenangkan permainan.</li>
+            <li>Jika angka dadu melebihi jumlah kotak yang tersisa menuju kotak 50, pion tetap di posisinya.</li>
+        </ol>
+        <h3 style="color:#2d5a3b; margin-top:14px; text-align:center;">Keterangan Ikon</h3>
+        <div style="background:#e6d8b5; padding:12px 16px; border-radius:20px; font-size:1rem; line-height:1.7;">
+            <p style="margin:4px 0;"><span style="font-size:1.4rem;">❓</span> <strong>Pertanyaan Edukasi</strong><br>
+            <small>Kotak kuning dengan tanda tanya. Pemain wajib menjawab pertanyaan budaya Nusantara. Benar = +10 poin, salah = tidak dapat poin.</small></p>
+            <p style="margin:4px 0;"><span style="font-size:1.4rem;">🪜</span> <strong>Tangga</strong> — naik ke kotak di atasnya.<br>
+            <span style="font-size:1.4rem;">🐍</span> <strong>Ular</strong> — turun ke kotak di bawahnya.</p>
+        </div>
+        <div class="modal-actions"><button class="btn-primary" onclick="closeModal()">MENGERTI</button></div>
+    `);
+});
+
+btnCollection.addEventListener('click', renderCollection);
+btnAchievements.addEventListener('click', renderAchievements);
+
+soundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+    soundToggle.classList.toggle('muted', !soundEnabled);
+    if (soundEnabled) {
+        ensureAudioCtx();
+        if (!musicPlaying) startMusic();
+    } else {
+        stopMusic();
+    }
+});
+
+infoBtn.addEventListener('click', () => {
+    showModal(`
+        <button class="btn-back" onclick="closeModal()">← Kembali</button>
+        <h2>ℹ️ TENTANG GAME</h2>
+        <p><strong>ULAR TANGGA NUSANTARA</strong></p>
+        <p>Ular Tangga Nusantara adalah permainan ular tangga digital yang menghadirkan pengalaman bermain bersama dengan sentuhan visual bernuansa Nusantara. Pemain menggerakkan pion menggunakan dadu, menaiki tangga, menghindari ular, dan menyelesaikan tantangan pada kotak tertentu.</p>
+        <p><strong>Tujuan Permainan:</strong> Menjadi pemain pertama yang berhasil mencapai kotak 50 melalui perjalanan di papan permainan.</p>
+        <p><strong>Elemen Permainan:</strong></p>
+        <ul style="padding-left:20px; margin-bottom:10px;">
+            <li>50 kotak dengan susunan nomor zig-zag.</li>
+            <li>Dua pemain atau lebih dengan pion yang berbeda warna.</li>
+            <li>Dadu untuk menentukan langkah.</li>
+            <li>Tangga untuk naik ke kotak yang lebih tinggi.</li>
+            <li>Ular untuk turun ke kotak yang lebih rendah.</li>
+            <li>Kotak pertanyaan sebagai tantangan edukasi.</li>
+            <li>Sistem giliran, skor, dan hasil permainan.</li>
+        </ul>
+        <p>Dibuat dengan HTML, CSS, dan JavaScript murni.</p>
+        <p>Selamat bermain dan belajar! 🇮🇩</p>
+        <div class="modal-actions"><button class="btn-primary" onclick="closeModal()">OK</button></div>
+    `);
+});
+
+btnBackPlayer.addEventListener('click', () => {
+    showScreen('home-screen');
+});
+
+function renderPlayerOptions() {
+    playerOptions.querySelectorAll('.player-card').forEach(card => {
+        card.classList.toggle('selected', parseInt(card.dataset.count) === selectedPlayerCount);
+        card.onclick = () => {
+            selectedPlayerCount = parseInt(card.dataset.count);
+            renderPlayerOptions();
+            renderNameInputs();
+        };
+    });
+    renderNameInputs();
+}
+
+function renderNameInputs() {
+    nameInputs.innerHTML = '';
+    if (selectedPlayerCount === 1) {
+        nameInputs.innerHTML = `
+            <div class="name-row"><label>Pemain</label><input type="text" id="name-0" placeholder="Nama kamu" value=""></div>
+        `;
+    } else {
+        for (let i = 0; i < selectedPlayerCount; i++) {
+            nameInputs.innerHTML += `
+                <div class="name-row"><label>Pemain ${i+1}</label><input type="text" id="name-${i}" placeholder="Nama (opsional)" value=""></div>
+            `;
+        }
+    }
+}
+
+btnStartGame.addEventListener('click', startGame);
+btnRoll.addEventListener('click', rollDice);
+
+btnPause.addEventListener('click', () => {
+    isPaused = !isPaused;
+    btnPause.textContent = isPaused ? '▶️ Lanjut' : '⏸️ Jeda';
+    if (isPaused) {
+        btnRoll.disabled = true;
+        showModal(`<h2>⏸️ JEDA</h2><p>Permainan dijeda. Tekan Lanjut untuk melanjutkan.</p><div class="modal-actions"><button class="btn-primary" onclick="closeModal()">OK</button></div>`);
+    } else {
+        if (players[currentPlayerIndex] && !players[currentPlayerIndex].isComputer) {
+            btnRoll.disabled = false;
+        }
+    }
+});
+
+btnBackHome.addEventListener('click', () => {
+    if (!gameActive) {
+        showScreen('home-screen');
+        return;
+    }
+    showModal(`
+        <h2>🏠 KEMBALI KE HOME?</h2>
+        <p>Apakah kamu yakin ingin kembali ke halaman utama? Progres permainan saat ini akan hilang.</p>
+        <div class="modal-actions">
+            <button class="btn-primary" id="btn-confirm-back">Ya, Kembali</button>
+            <button class="btn-secondary" id="btn-cancel-back">Lanjut Bermain</button>
+        </div>
+    `);
+    
+    document.getElementById('btn-confirm-back').addEventListener('click', () => {
+        closeModal();
+        gameActive = false;
+        isPaused = false;
+        document.querySelectorAll('.pion').forEach(p => p.remove());
+        showScreen('home-screen');
+        stopMusic();
+    });
+    document.getElementById('btn-cancel-back').addEventListener('click', () => {
+        closeModal();
+    });
+});
+
+/* ================================================================
+   INISIALISASI
+   ================================================================ */
+generateQuestionCells();
+buildBoard();
+renderPlayerOptions();
+renderDiceFace(1);
+
+if (stats.achievements) {
+    ACHIEVEMENTS.forEach(a => {
+        if (stats.achievements[a.id]) a.unlocked = true;
+    });
+}
+
+function tryStartMusicOnce() {
+    ensureAudioCtx();
+    if (soundEnabled && !musicPlaying) startMusic();
+    document.removeEventListener('click', tryStartMusicOnce);
+    document.removeEventListener('touchstart', tryStartMusicOnce);
+}
+document.addEventListener('click', tryStartMusicOnce);
+document.addEventListener('touchstart', tryStartMusicOnce);
+
+window.addEventListener('resize', () => {
+    drawConnectors();
+});
+
+window.closeModal = closeModal;
+window.renderCollection = renderCollection;
+</script>
+</body>
+</html>
